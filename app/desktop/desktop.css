@@ -1,0 +1,40 @@
+body{margin:0;font-family:Arial;background:#0f0f0f;color:white}
+header{display:flex;align-items:center;padding:10px 15px;background:#141414;flex-wrap:wrap}
+#menuBtn{font-size:24px;cursor:pointer;margin-right:15px}h1{margin:0;color:#00ccff;font-size:20px}
+#userGreeting{margin-left:14px;color:#bfefff;font-size:14px}#userGreeting a{color:#00ccff;text-decoration:none}
+.last-watched-card{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:#222;cursor:pointer}
+.last-watched-card img{width:56px;height:40px;object-fit:contain;background:#000;border-radius:4px}.last-watched-name{font-size:13px}.last-watched-empty{color:#aaa;font-size:13px}
+#translatorBar{margin-left:auto;background:#1f1f1f;color:white;border:none;padding:6px 10px;border-radius:6px}
+#layout{display:flex;flex-wrap:wrap}
+#sidebar{width:250px;background:#181818;height:100vh;position:fixed;left:-250px;transition:.3s;padding:15px;overflow-y:auto;z-index:1000}
+#sidebar.active{left:0}.sidebar-section{margin-bottom:25px}.sidebar-section h3{color:#00ccff;margin-bottom:10px}
+.sidebar-section ul{list-style:none;padding:0}.sidebar-section li{padding:8px 0;cursor:pointer;border-bottom:1px solid #333}
+#main{flex:1;padding:20px;transition:.3s;margin-left:0}#main.shift{margin-left:250px}
+#playerContainer{max-width:1000px;margin:auto;background:#121212;border-radius:10px;padding:16px}
+audio{width:100%}
+.radio-topline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.radio-topline #currentMode{background:#00ccff;color:#000;padding:4px 10px;border-radius:20px;font-weight:700}
+#currentStationName{font-size:14px;color:#d8f6ff}#signalBars{display:flex;gap:4px;margin-left:auto}
+#signalBars span{width:6px;background:#2c2c2c;border-radius:2px}.radio-controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.radio-controls button{background:#1f1f1f;border:1px solid #3a3a3a;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+.radio-controls button.active{background:#00ccff;color:#000;border-color:#00ccff}
+#frequencyDisplay{text-align:center;font-size:46px;font-weight:700;margin:12px 0 8px;color:#00ccff;letter-spacing:2px}
+#tunerSlider{width:100%;accent-color:#00ccff}
+#search{width:100%;max-width:1000px;margin:20px auto;display:block;padding:12px;border-radius:8px;border:none;font-size:16px;background:#1f1f1f;color:white}
+#channelGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;max-width:1200px;margin:auto}
+.channelCard{background:#1b1b1b;border-radius:8px;overflow:hidden;cursor:pointer;transition:.3s;position:relative;padding-top:12px}
+.channelCard:hover{transform:scale(1.05);box-shadow:0 8px 20px rgba(0,0,0,.6)}
+.channelName{padding:10px;font-size:14px;text-align:center}.channelFreq{text-align:center;color:#8fdfff;padding-bottom:10px;font-size:12px}
+.favBtn{position:absolute;top:8px;right:8px;font-size:18px;color:gold;cursor:pointer}
+#loadMoreBtn{display:none;margin:30px auto;padding:10px 20px;border:none;border-radius:6px;background:#ff9800;cursor:pointer}
+footer{text-align:center;padding:15px;font-size:12px;color:#aaa}
+@media(max-width:768px){#sidebar{width:80%;left:-80%}#sidebar.active{left:0}#main.shift{margin-left:0}header{flex-direction:column;align-items:flex-start}#userGreeting{margin-left:0;margin-top:8px}#translatorBar{margin-left:0;margin-top:10px}#frequencyDisplay{font-size:34px}}
+
+@media(max-width:480px){
+  #main{padding:12px}
+  #playerContainer{padding:12px}
+  .radio-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .radio-controls button{width:100%}
+  #frequencyDisplay{font-size:28px;letter-spacing:1px}
+  #search{font-size:14px;padding:10px}
+  #channelGrid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+}

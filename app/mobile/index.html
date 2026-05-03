@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/x-icon" href="../../favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omar-Radio Mobile</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<link rel="stylesheet" href="mobile.css">
+
+</head>
+
+<body>
+
+<header>
+  <div id="menuBtn">☰</div>
+  <h1 id="siteTitle">Omar-Radio Mobile</h1>
+  <div id="userGreeting">Hello! Sign Up / Log In</div>
+  <select id="translatorBar">
+    <option value="">🌐 Language</option>
+    <option value="af">Afrikaans</option><option value="sq">Shqip</option><option value="am">አማርኛ</option><option value="ar">العربية</option><option value="hy">Հայերեն</option><option value="az">Azərbaycan</option><option value="eu">Euskara</option><option value="be">Беларуская</option><option value="bn">বাংলা</option><option value="bs">Bosanski</option><option value="bg">Български</option><option value="ca">Català</option><option value="ceb">Cebuano</option><option value="zh-CN">中文（简体）</option><option value="zh-TW">中文（繁體）</option><option value="co">Corsu</option><option value="hr">Hrvatski</option><option value="cs">Čeština</option><option value="da">Dansk</option><option value="nl">Nederlands</option><option value="en">English</option><option value="eo">Esperanto</option><option value="et">Eesti</option><option value="fi">Suomi</option><option value="fr">Français</option><option value="fy">Frysk</option><option value="gl">Galego</option><option value="ka">ქართული</option><option value="de">Deutsch</option><option value="el">Ελληνικά</option><option value="gu">ગુજરાતી</option><option value="ht">Kreyòl Ayisyen</option><option value="ha">Hausa</option><option value="haw">ʻŌlelo Hawaiʻi</option><option value="hi">हिन्दी</option><option value="hmn">Hmoob</option><option value="hu">Magyar</option><option value="is">Íslenska</option><option value="ig">Igbo</option><option value="id">Bahasa Indonesia</option><option value="ga">Gaeilge</option><option value="it">Italiano</option><option value="ja">日本語</option><option value="jv">Basa Jawa</option><option value="kn">ಕನ್ನಡ</option><option value="kk">Қазақша</option><option value="km">ខ្មែរ</option><option value="ko">한국어</option><option value="ku">Kurdî</option><option value="ky">Кыргызча</option><option value="lo">ລາວ</option><option value="la">Latina</option><option value="lv">Latviešu</option><option value="lt">Lietuvių</option><option value="lb">Lëtzebuergesch</option><option value="mk">Македонски</option><option value="mg">Malagasy</option><option value="ms">Bahasa Melayu</option><option value="ml">മലയാളം</option><option value="mt">Malti</option><option value="mi">Māori</option><option value="mr">मराठी</option><option value="mn">Монгол</option><option value="my">မြန်မာ</option><option value="ne">नेपाली</option><option value="no">Norsk</option><option value="ny">Chichewa</option><option value="or">ଓଡ଼ିଆ</option><option value="ps">پښتو</option><option value="fa">فارسی</option><option value="pl">Polski</option><option value="pt">Português</option><option value="pa">ਪੰਜਾਬੀ</option><option value="ro">Română</option><option value="ru">Русский</option><option value="sm">Gagana Samoa</option><option value="gd">Gàidhlig</option><option value="sr">Српски</option><option value="st">Sesotho</option><option value="sn">Shona</option><option value="sd">سنڌي</option><option value="si">සිංහල</option><option value="sk">Slovenčina</option><option value="sl">Slovenščina</option><option value="so">Soomaali</option><option value="es">Español</option><option value="su">Basa Sunda</option><option value="sw">Kiswahili</option><option value="sv">Svenska</option><option value="tl">Tagalog</option><option value="tg">Тоҷикӣ</option><option value="ta">தமிழ்</option><option value="tt">Татар</option><option value="te">తెలుగు</option><option value="th">ไทย</option><option value="tr">Türkçe</option><option value="tk">Türkmençe</option><option value="uk">Українська</option><option value="ur">اردو</option><option value="ug">ئۇيغۇرچە</option><option value="uz">Oʻzbek</option><option value="vi">Tiếng Việt</option><option value="cy">Cymraeg</option><option value="xh">isiXhosa</option><option value="yi">ייִדיש</option><option value="yo">Yorùbá</option><option value="zu">isiZulu</option>
+  </select>
+</header>
+
+<div id="layout">
+<div id="sidebar">
+  <div class="sidebar-section">
+    <h3 id="categoriesTitle">Bands</h3>
+    <ul id="categories"></ul>
+  </div>
+
+  <div class="sidebar-section">
+    <h3 id="favoritesTitle">Favorites</h3>
+    <ul id="favorites"></ul>
+  </div>
+
+  <div class="sidebar-section">
+    <h3 id="lastWatchedTitle">Last Played</h3>
+    <div id="lastWatchedContainer"></div>
+  </div>
+</div>
+
+<div id="main">
+<div id="playerContainer">
+  <div class="radio-topline">
+    <span id="currentMode">FM</span>
+    <span id="currentStationName">No station tuned</span>
+    <div id="signalBars" aria-label="Signal strength"></div>
+  </div>
+  <div id="frequencyDisplay">98.7 FM</div>
+  <div class="radio-controls">
+    <button id="modeFM">FM</button><button id="modeAM">AM</button><button id="modeHD">HD</button>
+    <button id="tuneDown">-</button><button id="tuneUp">+</button>
+    <button id="scanDown">Scan Down</button><button id="scanUp">Scan Up</button>
+  </div>
+  <input id="tunerSlider" type="range">
+  <audio id="player" controls></audio>
+</div>
+
+<input type="text" id="search" placeholder="Search stations or frequency...">
+<div id="channelGrid"></div>
+<div style="text-align:center;"><button id="loadMoreBtn">Load More</button></div>
+</div>
+</div>
+
+<footer id="footerText">Powered by Google Translate · Hosted on GitHub Pages</footer>
+<script src="mobile.js"></script>
+</body>
+</html>

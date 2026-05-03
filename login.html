@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Omar-Radio Login</title>
+  <style>
+    body{margin:0;font-family:Arial;background:#0f0f0f;color:#fff;display:grid;place-items:center;min-height:100vh}
+    .card{width:min(92vw,380px);background:#181818;border:1px solid #2a2a2a;border-radius:12px;padding:22px}
+    h1{margin:0 0 14px;color:#00ccff;font-size:24px}
+    p{color:#aaa;font-size:13px;margin:0 0 18px}
+    label{font-size:13px;color:#bfefff;display:block;margin:10px 0 6px}
+    input{width:100%;padding:11px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;box-sizing:border-box}
+    button{width:100%;margin-top:14px;padding:11px;border:none;border-radius:8px;background:#00ccff;color:#000;font-weight:700;cursor:pointer}
+    .row{display:flex;justify-content:space-between;margin-top:10px;font-size:12px}
+    a{color:#00ccff;text-decoration:none}
+  </style>
+</head>
+<body>
+  <form class="card" onsubmit="event.preventDefault();localStorage.setItem('omarRadioUser',document.getElementById('email').value);window.location.href='index.html';">
+    <h1>Login</h1>
+    <p>Sign in to sync your Omar-Radio experience on this browser.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" placeholder="you@example.com" required />
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="••••••••" required />
+    <button type="submit">Sign In</button>
+    <div class="row">
+      <a href="index.html">Back to apps</a>
+      <a href="#">Create account</a>
+    </div>
+  </form>
+</body>
+</html>
