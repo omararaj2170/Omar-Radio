@@ -9,6 +9,8 @@ const fallbackStations = [
 ];
 let stations = [...fallbackStations];
 
+const REMOTE_STATIONS_API = "https://omararaj2170.github.io/Omar-Radio/api/stations.json";
+
 const modeConfig = { FM: { min: 87.5, max: 108.0, step: 0.1 }, AM: { min: 530, max: 1710, step: 10 }, HD: { min: 87.5, max: 108.0, step: 0.1 } };
 const el = id => document.getElementById(id);
 const player = el("player");
@@ -34,7 +36,56 @@ function updateSliderBounds() { const c = modeConfig[state.mode]; slider.min = c
 function updateModeButtons() { ["FM","AM","HD"].forEach(m=>el(`mode${m}`).classList.toggle("active", m===state.mode)); el("currentMode").textContent = state.mode; }
 function findStationByTuning(freq = state.frequency, mode = state.mode) { return stations.find(s => s.band === mode && Math.abs(Number(s.frequency) - Number(freq)) < 0.051); }
 
+function normalizeStation(station, index = 0) {
+  const tagText = `${station.tags || ""} ${station.name || ""}`.toLowerCase();
+  let band = station.band || "FM";
+  if (!station.band) {
+    if (tagText.includes("am")) band = "AM";
+    if (tagText.includes("hd") || tagText.includes("digital")) band = "HD";
+  }
+  const cfg = modeConfig[band] || modeConfig.FM;
+  const normalized = cfg.min + ((index * cfg.step) % (cfg.max - cfg.min));
+  const fallbackFrequency = band === "AM" ? Math.round(normalized / 10) * 10 : Number(normalized.toFixed(1));
+  return {
+    name: String(station.name || "Unknown Station").trim(),
+    frequency: Number(station.frequency ?? fallbackFrequency),
+    band,
+    streamUrl: station.streamUrl || station.url_resolved,
+    hdSub: station.hdSub || (band === "HD" ? "HD1" : undefined)
+  };
+}
+
+async function saveStationsToApi(stationsToSave) {
+  try {
+    await fetch(REMOTE_STATIONS_API, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(stationsToSave)
+    });
+  } catch (error) {
+    console.warn("Could not PUT stations to API:", error);
+  }
+}
+
 async function loadStationsFromApi() {
+  try {
+    const preferredResponse = await fetch(REMOTE_STATIONS_API);
+    if (preferredResponse.ok) {
+      const preferredData = await preferredResponse.json();
+      const preferredStations = (Array.isArray(preferredData) ? preferredData : [])
+        .filter(item => item && (item.streamUrl || item.url_resolved) && item.name)
+        .map((item, index) => normalizeStation(item, index));
+      if (preferredStations.length) {
+        stations = preferredStations;
+        renderGrid();
+        tuneTo(state.frequency);
+        return;
+      }
+    }
+  } catch (error) {
+    console.warn("Custom API unavailable, trying public directory:", error);
+  }
+
   try {
     const response = await fetch("https://de1.api.radio-browser.info/json/stations");
     if (!response.ok) throw new Error("API request failed");
@@ -42,26 +93,12 @@ async function loadStationsFromApi() {
     const mapped = data
       .filter(item => item && item.url_resolved && item.name)
       .slice(0, 300)
-      .map((item, index) => {
-        const tagText = `${item.tags || ""} ${item.name || ""}`.toLowerCase();
-        let band = "FM";
-        if (tagText.includes("am")) band = "AM";
-        if (tagText.includes("hd") || tagText.includes("digital")) band = "HD";
-        const cfg = modeConfig[band];
-        const normalized = cfg.min + ((index * cfg.step) % (cfg.max - cfg.min));
-        const frequency = band === "AM" ? Math.round(normalized / 10) * 10 : Number(normalized.toFixed(1));
-        return {
-          name: item.name.trim(),
-          frequency,
-          band,
-          streamUrl: item.url_resolved,
-          hdSub: band === "HD" ? "HD1" : undefined
-        };
-      });
+      .map((item, index) => normalizeStation(item, index));
     if (mapped.length) {
       stations = mapped;
       renderGrid();
       tuneTo(state.frequency);
+      saveStationsToApi(mapped);
     }
   } catch (error) {
     console.warn("Using fallback stations:", error);
