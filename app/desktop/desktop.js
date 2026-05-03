@@ -1,4 +1,4 @@
-const stations = [
+const fallbackStations = [
   { name: "Coast FM", frequency: 88.1, band: "FM", streamUrl: "https://ice1.somafm.com/groovesalad-128-mp3" },
   { name: "City Pop FM", frequency: 92.3, band: "FM", streamUrl: "https://ice2.somafm.com/indiepop-128-mp3" },
   { name: "News AM", frequency: 720, band: "AM", streamUrl: "https://live.amperwave.net/direct/bonneville-ktaram-aac-imc" },
@@ -7,6 +7,7 @@ const stations = [
   { name: "Electro HD2", frequency: 101.1, band: "HD", hdSub: "HD2", streamUrl: "https://ice2.somafm.com/beatblender-128-mp3" },
   { name: "Classic FM", frequency: 98.7, band: "FM", streamUrl: "https://ice1.somafm.com/dronezone-128-mp3" }
 ];
+let stations = [...fallbackStations];
 
 const modeConfig = { FM: { min: 87.5, max: 108.0, step: 0.1 }, AM: { min: 530, max: 1710, step: 10 }, HD: { min: 87.5, max: 108.0, step: 0.1 } };
 const el = id => document.getElementById(id);
@@ -32,6 +33,40 @@ function setMode(mode) { state.mode = mode; updateSliderBounds(); updateModeButt
 function updateSliderBounds() { const c = modeConfig[state.mode]; slider.min = c.min; slider.max = c.max; slider.step = c.step; slider.value = state.frequency; }
 function updateModeButtons() { ["FM","AM","HD"].forEach(m=>el(`mode${m}`).classList.toggle("active", m===state.mode)); el("currentMode").textContent = state.mode; }
 function findStationByTuning(freq = state.frequency, mode = state.mode) { return stations.find(s => s.band === mode && Math.abs(Number(s.frequency) - Number(freq)) < 0.051); }
+
+async function loadStationsFromApi() {
+  try {
+    const response = await fetch("https://de1.api.radio-browser.info/json/stations");
+    if (!response.ok) throw new Error("API request failed");
+    const data = await response.json();
+    const mapped = data
+      .filter(item => item && item.url_resolved && item.name)
+      .slice(0, 300)
+      .map((item, index) => {
+        const tagText = `${item.tags || ""} ${item.name || ""}`.toLowerCase();
+        let band = "FM";
+        if (tagText.includes("am")) band = "AM";
+        if (tagText.includes("hd") || tagText.includes("digital")) band = "HD";
+        const cfg = modeConfig[band];
+        const normalized = cfg.min + ((index * cfg.step) % (cfg.max - cfg.min));
+        const frequency = band === "AM" ? Math.round(normalized / 10) * 10 : Number(normalized.toFixed(1));
+        return {
+          name: item.name.trim(),
+          frequency,
+          band,
+          streamUrl: item.url_resolved,
+          hdSub: band === "HD" ? "HD1" : undefined
+        };
+      });
+    if (mapped.length) {
+      stations = mapped;
+      renderGrid();
+      tuneTo(state.frequency);
+    }
+  } catch (error) {
+    console.warn("Using fallback stations:", error);
+  }
+}
 
 function playStation(station) {
   if (hls) { hls.destroy(); hls = null; }
@@ -131,3 +166,4 @@ el("modeFM").onclick = () => setMode("FM"); el("modeAM").onclick = () => setMode
 player.addEventListener("error", () => { el("currentStationName").textContent = "Station unavailable"; updateSignal(1); });
 
 updateModeButtons(); updateSliderBounds(); renderCategories(); renderFavorites(); updateLastPlayed(); tuneTo(state.frequency); renderGrid();
+loadStationsFromApi();
