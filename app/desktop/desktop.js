@@ -10,6 +10,7 @@ const fallbackStations = [
 let stations = [...fallbackStations];
 
 const REMOTE_STATIONS_API = "https://omararaj2170.github.io/Omar-Radio/api/stations.json";
+const PUBLIC_STATIONS_API = "https://de1.api.radio-browser.info/json/stations?hidebroken=true&order=clickcount&reverse=true&limit=40000";
 
 const modeConfig = { FM: { min: 87.5, max: 108.0, step: 0.1 }, AM: { min: 530, max: 1710, step: 10 }, HD: { min: 87.5, max: 108.0, step: 0.1 } };
 const el = id => document.getElementById(id);
@@ -77,6 +78,7 @@ async function loadStationsFromApi() {
         .map((item, index) => normalizeStation(item, index));
       if (preferredStations.length) {
         stations = preferredStations;
+        console.info(`Loaded ${stations.length} stations from hosted API.`);
         renderGrid();
         tuneTo(state.frequency);
         return;
@@ -87,15 +89,15 @@ async function loadStationsFromApi() {
   }
 
   try {
-    const response = await fetch("https://de1.api.radio-browser.info/json/stations");
+    const response = await fetch(PUBLIC_STATIONS_API);
     if (!response.ok) throw new Error("API request failed");
     const data = await response.json();
     const mapped = data
       .filter(item => item && item.url_resolved && item.name)
-      .slice(0, 300)
       .map((item, index) => normalizeStation(item, index));
     if (mapped.length) {
       stations = mapped;
+      console.info(`Loaded ${stations.length} stations from public API.`);
       renderGrid();
       tuneTo(state.frequency);
       saveStationsToApi(mapped);
